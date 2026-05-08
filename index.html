@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>良美眼鏡 - 線上預約</title>
+    <title>良美眼鏡 - 預約系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -24,22 +24,21 @@
         <p class="text-sm text-slate-600 font-bold tracking-wider" id="loading-text">處理中，請稍候...</p>
     </div>
 
-    <!-- 頂部導覽與連線燈號 -->
+    <!-- 頂部導覽 -->
     <header class="bg-white border-b sticky top-0 z-50 shadow-sm h-16 flex items-center">
         <div class="max-w-md mx-auto w-full px-4 flex items-center justify-between">
             <div class="flex items-center space-x-2 text-blue-800 cursor-pointer" onclick="goHome()">
-                <i class="fa-solid fa-glasses text-2xl"></i>
-                <span class="font-bold text-slate-800 tracking-tight text-lg">良美眼鏡</span>
-            </div>
+    <img src="logo.png" alt="良美眼鏡" class="h-8 w-8 object-contain rounded-full shadow-sm">
+    <span class="font-bold text-slate-800 tracking-tight text-lg">良美眼鏡</span>
+</div>
             <div id="line-status" class="text-[10px] font-bold bg-gray-100 text-gray-400 px-2 py-1 rounded-full flex items-center">
-                <i class="fa-solid fa-circle-nodes mr-1 animate-pulse"></i>偵測中
+                <i class="fa-solid fa-circle-nodes mr-1 animate-pulse"></i>載入中
             </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-4 pt-6 pb-32">
-        
-        <!-- Step 0: 首頁 -->
+    <main class="max-w-md mx-auto px-4 pt-6 pb-24">
+        <!-- Step 0 -->
         <div id="step-0" class="step-content active text-center">
             <div class="mb-10 mt-8">
                 <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
@@ -61,10 +60,10 @@
         <!-- 查詢頁面 -->
         <div id="step-query" class="step-content">
             <h2 class="text-xl font-bold text-slate-800 mb-2">查詢您的預約</h2>
-            <p class="text-slate-500 mb-6 text-sm">請輸入您預約時留下的行動電話號碼。</p>
+            <p class="text-slate-500 mb-6 text-sm">請輸入您預約時留下的手機號碼。</p>
             <div class="bg-white rounded-2xl p-6 shadow-sm mb-6 border border-slate-100">
-                <label class="block text-sm font-bold text-slate-700 mb-2">手機號碼 ：</label>
-                <input type="tel" id="query-phone" placeholder="0912345678" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 mb-4 transition-all">
+                <label class="block text-sm font-bold text-slate-700 mb-2">手機號碼</label>
+                <input type="tel" id="query-phone" placeholder="例如: 0912345678" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 mb-4 transition-all">
                 <button onclick="executeQuery()" class="w-full bg-blue-800 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-blue-900 transition-all">送出查詢</button>
             </div>
             <div id="query-results" class="space-y-4 hidden">
@@ -73,16 +72,16 @@
             </div>
         </div>
         
-        <!-- Step 1: 服務 -->
+        <!-- Step 1 -->
         <div id="step-1" class="step-content">
             <h2 class="text-xl font-bold text-slate-800 mb-2">第一步：選擇服務</h2>
-            <p class="text-slate-500 mb-6 text-sm">請選擇您想預約的服務項目：</p>
+            <p class="text-slate-500 mb-6 text-sm">請選擇您今日想預約的服務項目：</p>
             <div id="services-list" class="space-y-3">
                 <div class="text-center py-10 text-slate-400"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>載入服務項目中...</div>
             </div>
         </div>
 
-        <!-- Step 2: 日期與時間 -->
+        <!-- Step 2 -->
         <div id="step-2" class="step-content">
             <h2 class="text-xl font-bold text-slate-800 mb-2">第二步：選擇時間</h2>
             <div class="bg-blue-50 text-blue-800 px-4 py-3 rounded-xl mb-6 text-sm font-medium flex items-center shadow-inner">
@@ -105,23 +104,23 @@
             </div>
         </div>
 
-        <!-- Step 3: 資料 -->
+        <!-- Step 3 -->
         <div id="step-3" class="step-content">
             <h2 class="text-xl font-bold text-slate-800 mb-2">最後一步：填寫資料</h2>
             <p class="text-slate-500 mb-6 text-sm">請留下您的聯絡方式，以便發送通知。</p>
             <div class="bg-white rounded-2xl p-6 shadow-sm space-y-5 border border-slate-100">
-                <div><label class="block text-sm font-bold text-slate-700 mb-2">預約姓名 :</label><input type="text" id="user-name" placeholder="填入檢查 或 配鏡者" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 transition-all"></div>
-                <div><label class="block text-sm font-bold text-slate-700 mb-2">手機號碼 :</label><input type="tel" id="user-phone" placeholder="0912345678" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 transition-all"></div>
-                <div><label class="block text-sm font-bold text-slate-700 mb-2">備註 (選填)</label><textarea id="user-note" rows="3" placeholder="是否有特殊狀況 或 指定驗光師？" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 transition-all"></textarea></div>
+                <div><label class="block text-sm font-bold text-slate-700 mb-2">預約姓名:</label><input type="text" id="user-name" placeholder="填入配鏡 or 檢查者" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 transition-all"></div>
+                <div><label class="block text-sm font-bold text-slate-700 mb-2">手機號碼:</label><input type="tel" id="user-phone" placeholder="09xxxxxxxx" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 transition-all"></div>
+                <div><label class="block text-sm font-bold text-slate-700 mb-2">需求備註 (選填)</label><textarea id="user-note" rows="3" placeholder="是否有特殊狀況 或 指定驗光師？" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800 transition-all"></textarea></div>
             </div>
             <button onclick="submitBooking()" class="w-full mt-8 bg-blue-800 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 hover:bg-blue-900 transition-all text-lg">確認預約</button>
         </div>
 
-        <!-- Step 4: 成功 -->
+        <!-- Step 4 -->
         <div id="step-4" class="step-content text-center py-10">
             <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner"><i class="fa-solid fa-check text-5xl"></i></div>
             <h2 class="text-2xl font-bold text-slate-800 mb-2">預約成功！</h2>
-            <p class="text-slate-500 mb-8 px-4 text-sm leading-relaxed">我們已為您保留時段。<br>若您有綁定 LINE，稍後將收到通知。</p>
+            <p class="text-slate-500 mb-8 px-4 text-sm leading-relaxed">我們已為您保留時段。<br>稍後將透過 LINE 發送確認通知。</p>
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 text-left mb-8 mx-2">
                 <div class="flex justify-between border-b border-slate-50 pb-3 mb-3"><span class="text-slate-400 text-sm">預約項目</span><span id="final-service" class="font-bold text-slate-800 text-sm"></span></div>
                 <div class="flex justify-between border-b border-slate-50 pb-3 mb-3"><span class="text-slate-400 text-sm">日期時間</span><span id="final-time" class="font-bold text-blue-700 text-sm"></span></div>
@@ -131,31 +130,37 @@
         </div>
     </main>
 
-    <!-- ✅ 返回按鈕：改為 sticky 定位，緊貼內容區底部，更容易看到 -->
-    <div id="footer-nav" class="hidden fixed bottom-0 left-0 right-0 z-40" style="padding-bottom: env(safe-area-inset-bottom);">
-        <!-- 漸層遮罩，讓按鈕浮起來更自然 -->
-        <div class="bg-gradient-to-t from-white via-white to-transparent pt-6 pb-4 px-4">
-            <div class="max-w-md mx-auto">
-                <button onclick="prevStep()" class="flex items-center justify-center space-x-2 bg-white text-slate-600 font-bold border border-slate-200 rounded-2xl py-3.5 px-6 shadow-md hover:bg-slate-50 hover:text-slate-800 hover:border-slate-300 transition-all active:scale-95 w-auto">
-                    <i class="fa-solid fa-chevron-left text-sm"></i>
-                    <span>返回上一步</span>
-                </button>
-            </div>
+    <div id="footer-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] hidden z-40">
+        <div class="max-w-md mx-auto flex justify-between items-center px-2">
+            <button onclick="prevStep()" class="flex items-center text-slate-500 font-medium hover:text-slate-800 transition-colors"><i class="fa-solid fa-chevron-left mr-2"></i> 返回</button>
         </div>
     </div>
 
-    <!-- === 所有程式邏輯 === -->
+    <!-- === API 與邏輯區塊 === -->
     <script>
-        const MY_LIFF_ID = '2008736713-B5dIp92d'; 
+        // 🌟🌟🌟 請將這裡換成您「剛剛複製的 Google Apps Script 網址」 🌟🌟🌟
+        const YOUR_GAS_URL = 'https://script.google.com/macros/s/AKfycbxAXU0WFIhrxEPNPCcYjw72fOJQWMNdmufUpH18-PEiJj32_e3lS8DVxW3onKyUM5mO-Q/exec'; 
+        
+        const MY_LIFF_ID = '2005710858-Mo4vjthR'; 
         let bookingData = { service: '', duration: 0, date: '', time: '', name: '', phone: '', note: '', lineId: '' };
         let currentStep = 0; 
         let systemSettings = null; 
         let currentDate = new Date(); 
 
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            console.error("網頁錯誤: " + msg);
-            return false;
-        };
+        // 【全新 API 呼叫器】取代原本會卡死的 google.script.run
+        async function callAPI(actionName, payloadData = {}) {
+            try {
+                const response = await fetch(YOUR_GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: actionName, payload: payloadData }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' } // 使用 text/plain 繞過 CORS
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("API 錯誤:", error);
+                throw error;
+            }
+        }
 
         function updateStatusBadge(type, message = '') {
             const badge = document.getElementById('line-status');
@@ -164,140 +169,73 @@
                 badge.innerHTML = '<i class="fa-brands fa-line mr-1 text-xs"></i>已連線';
             } else if (type === 'error') {
                 badge.className = "text-[10px] font-bold bg-red-100 text-red-600 px-2 py-1 rounded-full flex items-center";
-                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i>' + message;
-            } else if (type === 'loading') {
-                badge.className = "text-[10px] font-bold bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full flex items-center";
-                badge.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i>' + message;
+                badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i>連線異常';
             }
         }
 
-        // ✅ 修正：loadBackendData 只負責抓資料並渲染，不再控制頁面跳轉
-        function loadBackendData() {
-            if (typeof google !== 'undefined') {
-                google.script.run
-                    .withSuccessHandler(settings => {
-                        if (!settings) return;
-                        systemSettings = settings;
-                        renderServices(settings); // 資料回來就更新服務列表，不管在哪個 step
-                        showLoading(false);        // 確保 loading 蓋板關掉
-                    })
-                    .getAdminSettings();
-            } else {
-                console.warn("本地預覽模式...");
-                systemSettings = { config: { maxCap: 1, advancedDays: 30 }, services: [{ name: '測試預約', duration: 60 }], schedule: [], specialDates: [] };
-                renderServices(systemSettings);
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            updateStatusBadge('loading', '連線中...');
-
-            if (typeof liff === 'undefined') {
-                updateStatusBadge('error', '無 SDK');
-                loadBackendData();
-                return;
-            }
-
-            const liffInitTask = liff.init({ liffId: MY_LIFF_ID, withLoginOnExternalBrowser: true });
-            const timeoutTask = new Promise((resolve, reject) => {
-                setTimeout(() => reject(new Error("TIMEOUT")), 5000);
-            });
-
-            Promise.race([liffInitTask, timeoutTask])
+        window.onload = async function() {
+            // 1. 啟動 LIFF
+            liff.init({ liffId: MY_LIFF_ID })
                 .then(() => {
-                    updateStatusBadge('loading', '驗證中...');
-                    if (!liff.isLoggedIn()) {
-                        liff.login();
-                    } else {
-                        return liff.getProfile();
-                    }
+                    if (!liff.isLoggedIn()) liff.login();
+                    else return liff.getProfile();
                 })
                 .then(profile => {
                     if (profile) {
                         bookingData.lineId = profile.userId;
                         updateStatusBadge('success');
-                        console.log("LINE ID 抓取成功");
                     }
-                    loadBackendData();
                 })
                 .catch(err => {
-                    if (err.message === "TIMEOUT") {
-                        updateStatusBadge('error', '連線逾時');
-                        console.warn("LIFF 被 Google 沙盒阻擋，已強制脫逃。");
-                    } else {
-                        updateStatusBadge('error', '連線失敗');
-                    }
-                    loadBackendData(); // 連線失敗也要讓客人能預約
+                    updateStatusBadge('error');
+                    console.error("LIFF 錯誤", err);
                 });
-        });
 
-        // ==========================================
-        // 介面互動與預約邏輯
-        // ==========================================
+            // 2. 透過 API 取得後台設定
+            try {
+                const settings = await callAPI('getSettings');
+                if(settings && !settings.error) {
+                    systemSettings = settings;
+                    renderServices(settings);
+                } else {
+                    alert("載入後台失敗: " + settings.error);
+                }
+            } catch(e) {
+                console.warn("無法連線後台", e);
+            }
+        };
 
-        function showLoading(show, text = "處理中，請稍候...") {
+        function showLoading(show, text = "處理中...") {
             document.getElementById('loading').style.display = show ? 'flex' : 'none';
             document.getElementById('loading-text').innerText = text;
         }
 
-        function goHome() {
-            currentStep = 0;
-            bookingData = { service: '', duration: 0, date: '', time: '', name: '', phone: '', note: '', lineId: bookingData.lineId };
-            updateUI();
-        }
-
-        // ✅ 核心修正：立刻跳頁，不等 systemSettings
-        function startBooking() {
-            currentStep = 1;
-            updateUI(); // 立刻跳到 Step 1，services-list 的 spinner 會繼續轉直到資料回來
-        }
-
-        function startQuery() {
-            currentStep = 'query';
-            document.getElementById('query-results').classList.add('hidden');
-            document.getElementById('query-phone').value = '';
-            updateUI();
-        }
+        // --- 介面控制 ---
+        function goHome() { currentStep = 0; bookingData = { ...bookingData, service: '', duration: 0, date: '', time: '', name: '', phone: '', note: '' }; updateUI(); }
+        function startBooking() { if(!systemSettings) return; currentStep = 1; updateUI(); }
+        function startQuery() { currentStep = 'query'; document.getElementById('query-results').classList.add('hidden'); document.getElementById('query-phone').value = ''; updateUI(); }
+        function nextStep() { if (currentStep < 4) { currentStep++; updateUI(); } }
+        function prevStep() { if (currentStep === 'query') goHome(); else if (currentStep > 0) { currentStep--; updateUI(); } }
 
         function updateUI() {
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-            const footerNav = document.getElementById('footer-nav');
-
-            if (typeof currentStep === 'number') {
+            if(typeof currentStep === 'number') {
                 document.getElementById(`step-${currentStep}`).classList.add('active');
-                if (currentStep >= 1 && currentStep <= 3) {
-                    footerNav.classList.remove('hidden');
-                } else {
-                    footerNav.classList.add('hidden');
-                }
+                document.getElementById('footer-nav').classList.toggle('hidden', currentStep < 1 || currentStep > 3);
                 if (currentStep === 2) {
                     document.getElementById('selected-service-display').innerText = `${bookingData.service} (${bookingData.duration}分鐘)`;
                     renderCalendar();
                 }
             } else if (currentStep === 'query') {
                 document.getElementById('step-query').classList.add('active');
-                footerNav.classList.remove('hidden');
+                document.getElementById('footer-nav').classList.remove('hidden');
             }
             window.scrollTo(0, 0); 
         }
 
-        function nextStep() { if (typeof currentStep === 'number' && currentStep < 4) { currentStep++; updateUI(); } }
-        
-        function prevStep() { 
-            if (currentStep === 'query') { 
-                goHome(); 
-            } else if (typeof currentStep === 'number' && currentStep > 0) { 
-                currentStep--; 
-                updateUI(); 
-            } 
-        }
-
         function renderServices(settings) {
             const list = document.getElementById('services-list');
-            if(!settings.services || settings.services.length === 0) {
-                list.innerHTML = '<p class="text-center py-10 text-slate-400">目前尚無開放服務</p>';
-                return;
-            }
+            if(!settings.services || settings.services.length === 0) return list.innerHTML = '<p class="text-center py-10 text-slate-400">目前尚無開放服務</p>';
             list.innerHTML = settings.services.map(s => `
                 <button onclick="selectService('${s.name}', ${s.duration})" class="w-full text-left bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:border-blue-600 transition-all flex justify-between items-center group">
                     <h3 class="font-bold text-slate-800 group-hover:text-blue-800 transition-colors">${s.name}</h3>
@@ -309,25 +247,17 @@
         }
 
         function selectService(name, dur) { bookingData.service = name; bookingData.duration = dur; nextStep(); }
-
-        function changeMonth(delta) {
-            currentDate.setMonth(currentDate.getMonth() + delta);
-            bookingData.date = ''; 
-            document.getElementById('time-slots-grid').innerHTML = '<p class="col-span-3 text-center py-6 text-slate-400 text-sm bg-slate-50 rounded-xl border border-dashed border-slate-200">請先選擇上方日期</p>';
-            renderCalendar();
-        }
+        function changeMonth(delta) { currentDate.setMonth(currentDate.getMonth() + delta); bookingData.date = ''; renderCalendar(); }
 
         function checkDateAvailability(cellDateObj, dateStr) {
             const today = new Date(); today.setHours(0,0,0,0);
-            const maxDate = new Date(today);
-            maxDate.setDate(today.getDate() + (systemSettings.config.advancedDays || 30));
+            const maxDate = new Date(today); maxDate.setDate(today.getDate() + (systemSettings.config.advancedDays || 30));
             if (cellDateObj < today || cellDateObj > maxDate) return false;
             if (systemSettings.specialDates) {
                 const special = systemSettings.specialDates.find(d => d.date === dateStr);
                 if (special) return special.isOpen; 
             }
-            const dayMap = ['週日','週一','週二','週三','週四','週五','週六'];
-            const dayName = dayMap[cellDateObj.getDay()];
+            const dayName = ['週日','週一','週二','週三','週四','週五','週六'][cellDateObj.getDay()];
             if (systemSettings.schedule) {
                 const sched = systemSettings.schedule.find(s => s.day === dayName);
                 if (sched) return sched.isOpen;
@@ -337,10 +267,9 @@
 
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
-            const monthDisplay = document.getElementById('current-month-display');
             grid.innerHTML = '';
             const year = currentDate.getFullYear(); const month = currentDate.getMonth();
-            monthDisplay.innerText = `${year}年 ${month + 1}月`;
+            document.getElementById('current-month-display').innerText = `${year}年 ${month + 1}月`;
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const today = new Date(); today.setHours(0,0,0,0);
@@ -359,122 +288,89 @@
                     cell.classList.add('cursor-pointer', 'text-slate-700', 'hover:bg-blue-50');
                     if(cellDate.getTime() === today.getTime()) cell.classList.add('bg-slate-100', 'font-bold');
                     if(bookingData.date === dateStr) cell.classList.add('selected');
-                    
                     cell.onclick = () => {
                         document.querySelectorAll('.date-cell').forEach(c => c.classList.remove('selected'));
-                        cell.classList.add('selected');
-                        bookingData.date = dateStr;
-                        fetchTimes(dateStr);
+                        cell.classList.add('selected'); bookingData.date = dateStr; fetchTimes(dateStr);
                     };
                 }
                 grid.appendChild(cell);
             }
         }
 
-        function fetchTimes(dateStr) {
-            showLoading(true, "為您尋找空檔中...");
-            if (typeof google !== 'undefined') {
-                google.script.run
-                    .withSuccessHandler(slots => { showLoading(false); renderTimeSlots(slots); })
-                    .withFailureHandler(error => { showLoading(false); alert("錯誤：" + error.message); })
-                    .getAvailableSlots(dateStr, bookingData.service);
-            } else {
-                setTimeout(() => { showLoading(false); renderTimeSlots(["10:00", "13:00"]); }, 500);
+        async function fetchTimes(dateStr) {
+            showLoading(true, "尋找空檔中...");
+            try {
+                const slots = await callAPI('getSlots', { dateStr: dateStr, serviceName: bookingData.service });
+                renderTimeSlots(slots);
+            } catch(e) {
+                alert("讀取時段失敗");
+            } finally {
+                showLoading(false);
             }
         }
 
         function renderTimeSlots(slots) {
             const grid = document.getElementById('time-slots-grid');
             grid.innerHTML = '';
-            if (!slots || slots.length === 0) {
-                grid.innerHTML = '<p class="col-span-3 text-center py-6 text-red-500 text-sm bg-red-50 rounded-xl border border-red-100"><i class="fa-solid fa-circle-xmark mr-1"></i> 該日額滿或已被預定</p>';
-                return;
-            }
+            if (!slots || slots.length === 0) return grid.innerHTML = '<p class="col-span-3 text-center py-6 text-red-500 text-sm">該日已額滿</p>';
             slots.forEach(time => {
-                const btn = document.createElement('button');
-                btn.innerText = time;
-                btn.className = "py-3.5 text-sm font-bold border border-slate-200 bg-white text-slate-700 rounded-xl hover:bg-blue-800 hover:text-white transition-all shadow-sm";
-                btn.onclick = () => { bookingData.time = time; nextStep(); };
-                grid.appendChild(btn);
+                const btn = document.createElement('button'); btn.innerText = time;
+                btn.className = "py-3.5 text-sm font-bold border border-slate-200 bg-white text-slate-700 rounded-xl hover:bg-blue-800 hover:text-white transition-all";
+                btn.onclick = () => { bookingData.time = time; nextStep(); }; grid.appendChild(btn);
             });
         }
 
-        function submitBooking() {
+        async function submitBooking() {
             bookingData.name = document.getElementById('user-name').value.trim();
             bookingData.phone = document.getElementById('user-phone').value.trim();
             bookingData.note = document.getElementById('user-note').value.trim();
-            
-            if (!bookingData.name || !bookingData.phone) return alert('請確實填寫姓名與行動電話。');
+            if (!bookingData.name || !bookingData.phone) return alert('請填寫姓名與電話');
 
-            showLoading(true, "建立預約並同步行事曆...");
-            if (typeof google !== 'undefined') {
-                google.script.run
-                    .withSuccessHandler(res => {
-                        showLoading(false);
-                        if(res.success) {
-                            document.getElementById('final-service').innerText = bookingData.service;
-                            document.getElementById('final-time').innerText = `${bookingData.date} ${bookingData.time}`;
-                            nextStep();
-                        } else {
-                            alert('預約失敗，可能已被訂走：' + res.msg);
-                            currentStep = 2; updateUI(); 
-                        }
-                    })
-                    .withFailureHandler(error => { showLoading(false); alert("系統錯誤：" + error.message); })
-                    .submitBooking(bookingData);
-            } else {
-                setTimeout(() => { showLoading(false); nextStep(); }, 500);
-            }
+            showLoading(true, "建立預約...");
+            try {
+                const res = await callAPI('submitBooking', bookingData);
+                if(res.success) {
+                    document.getElementById('final-service').innerText = bookingData.service;
+                    document.getElementById('final-time').innerText = `${bookingData.date} ${bookingData.time}`;
+                    nextStep();
+                } else {
+                    alert('預約失敗：' + res.msg); currentStep = 2; updateUI(); 
+                }
+            } catch(e) { alert("送出失敗"); } finally { showLoading(false); }
         }
 
-        function executeQuery() {
+        async function executeQuery() {
             const phone = document.getElementById('query-phone').value.trim();
-            if (!phone) return alert('請輸入電話號碼');
+            if (!phone) return alert('請輸入電話');
             showLoading(true, "查詢中...");
-            if (typeof google !== 'undefined') {
-                google.script.run
-                    .withSuccessHandler(results => { showLoading(false); renderQueryResults(results); })
-                    .withFailureHandler(error => { showLoading(false); alert("查詢失敗：" + error.message); })
-                    .queryBookingsByPhone(phone);
-            } else {
-                setTimeout(() => { showLoading(false); renderQueryResults([]); }, 500);
-            }
+            try {
+                const results = await callAPI('queryBookings', { phone: phone });
+                renderQueryResults(results);
+            } catch(e) { alert("查詢失敗"); } finally { showLoading(false); }
         }
 
         function renderQueryResults(results) {
             const container = document.getElementById('results-container');
             document.getElementById('query-results').classList.remove('hidden');
-            if (!results || results.length === 0) {
-                container.innerHTML = '<div class="text-center py-6 text-slate-500 bg-slate-50 rounded-xl text-sm border border-slate-200">查無近期的預約紀錄。</div>';
-                return;
-            }
+            if (!results || results.length === 0) return container.innerHTML = '<div class="text-center py-6 text-slate-500 text-sm">查無紀錄</div>';
             container.innerHTML = results.map(b => `
-                <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-sm relative">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded text-xs font-bold mr-2">${b.service}</span>
-                            <span class="text-xs font-bold ${b.status === '待確認' ? 'text-yellow-600' : 'text-green-600'}">${b.status}</span>
-                        </div>
-                        <button onclick="cancelBooking('${b.id}')" class="text-xs text-red-500 hover:text-red-700 font-bold border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded transition-colors">取消預約</button>
+                <div class="bg-white border p-4 rounded-xl shadow-sm mb-3">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 rounded">${b.service}</span>
+                        <button onclick="cancelBooking('${b.id}')" class="text-xs text-red-500 font-bold">取消</button>
                     </div>
-                    <div class="font-bold text-slate-800 text-lg mt-3">${b.date}</div>
-                    <div class="text-slate-500 text-sm">${b.time}</div>
+                    <div class="font-bold text-lg">${b.date}</div><div class="text-slate-500 text-sm">${b.time}</div>
                 </div>
             `).join('');
         }
 
-        function cancelBooking(id) {
-            if(confirm('確定要取消這筆預約嗎？')) {
-                showLoading(true, "正在取消...");
-                if (typeof google !== 'undefined') {
-                    google.script.run
-                        .withSuccessHandler(res => {
-                            showLoading(false);
-                            if(res.success) { alert('已取消！'); executeQuery(); } 
-                            else { alert('取消失敗：' + res.msg); }
-                        })
-                        .cancelBookingByUser(id);
-                }
+        async function cancelBooking(id) {
+            if(confirm('確定要取消嗎？')) {
+                showLoading(true, "取消中...");
+                try {
+                    const res = await callAPI('cancelBooking', { bookingId: id });
+                    if(res.success) { alert('已取消'); executeQuery(); } else alert('取消失敗');
+                } catch(e) { alert("發生錯誤"); } finally { showLoading(false); }
             }
         }
     </script>
