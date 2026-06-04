@@ -275,12 +275,13 @@
         }
 
         // 服務對照表：名稱關鍵字 → icon、顏色、說明、分類
+        // ⚠️ 順序很重要！越精確的關鍵字要放越前面
         const SERVICE_MAP = [
-            { keywords: ['成人'],      icon: 'ti-eye',        bg: '#E6F1FB', color: '#185FA5', desc: '首次配鏡或換度數適用',   category: '驗光配鏡' },
-            { keywords: ['兒童','小孩'], icon: 'ti-mood-kid',   bg: '#EAF3DE', color: '#3B6D11', desc: '專業兒童視力檢查與配鏡', category: '驗光配鏡' },
-            { keywords: ['追蹤'],      icon: 'ti-chart-line', bg: '#FAEEDA', color: '#854F0B', desc: '定期追蹤度數變化',       category: '視力追蹤' },
-            { keywords: ['眼健康','篩查','健康'], icon: 'ti-heart-rate', bg: '#FBEAF0', color: '#993556', desc: '全面性眼部健康檢查', category: '視力追蹤' },
-            { keywords: ['換片','磨製','鏡片'], icon: 'ti-tool',  bg: '#EEEDFE', color: '#534AB7', desc: '保留原有鏡框換新鏡片', category: '其他服務' },
+            { keywords: ['追蹤'],               icon: 'ti-chart-line',    bg: '#FAEEDA', color: '#854F0B', desc: '定期追蹤度數變化',       category: '視力追蹤' },
+            { keywords: ['眼健康','篩查','健康'], icon: 'ti-heart-monitor', bg: '#FBEAF0', color: '#993556', desc: '全面性眼部健康檢查',     category: '視力追蹤' },
+            { keywords: ['成人'],               icon: 'ti-eye',           bg: '#E6F1FB', color: '#185FA5', desc: '首次配鏡或換度數適用',   category: '驗光配鏡' },
+            { keywords: ['兒童','小孩'],         icon: 'ti-mood-kid',      bg: '#EAF3DE', color: '#3B6D11', desc: '專業兒童視力檢查與配鏡', category: '驗光配鏡' },
+            { keywords: ['換片','磨製','鏡片'],  icon: 'ti-tool',          bg: '#EEEDFE', color: '#534AB7', desc: '保留原有鏡框換新鏡片',   category: '其他服務' },
         ];
         const DEFAULT_STYLE = { icon: 'ti-eye-check', bg: '#F1EFE8', color: '#5F5E5A', desc: '', category: '其他服務' };
 
