@@ -315,8 +315,8 @@
         // 服務對照表（關鍵字順序很重要：越精確的要放越前面，例如「追蹤」要在「兒童」之前，
         // 否則「兒童視力追蹤」會先被「兒童」比對中，誤歸類到配鏡類）
         const SERVICE_MAP = [
-            { keywords: ['追蹤'],               icon: 'ti-zoom-check', desc: '定期回診，追蹤度數與眼軸變化', category: 'track' },
-            { keywords: ['眼健康','篩查','健康'], icon: 'ti-heart-plus',  desc: '全面性眼部健康與疾病篩檢',     category: 'track' },
+            { keywords: ['追蹤'],               icon: 'ti-zoom-check', desc: '定期追蹤度數變化', category: 'track' },
+            { keywords: ['眼健康','篩查','健康'], icon: 'ti-heart-plus',  desc: '角膜、水晶體、眼底等視力檢測',     category: 'track' },
             { keywords: ['成人'],               icon: 'ti-eye',         desc: '成人驗光、挑選鏡框、配新眼鏡', category: 'glasses' },
             { keywords: ['兒童','小孩'],         icon: 'ti-mood-kid',    desc: '兒童視力檢查、挑選鏡框與配鏡', category: 'glasses' },
             { keywords: ['換片','磨製','鏡片'],  icon: 'ti-tool',        desc: '保留原有鏡框，更換新鏡片',     category: 'other' },
@@ -325,9 +325,9 @@
 
         // 三大主題區塊的顏色與白話標題（家長一眼就知道自己屬於哪一種）
         const CATEGORY_STYLE = {
-            glasses: { label: '我需要配鏡 / 換眼鏡',         sub: '驗光、挑選鏡框、配一副新眼鏡',   bg: '#EBF3FF', color: '#2563EB' },
-            track:   { label: '我只需要眼部檢查 / 度數追蹤', sub: '不換新眼鏡，純檢查或定期回診', bg: '#FEF3C7', color: '#D97706' },
-            other:   { label: '其他服務',                   sub: '',                              bg: '#F1F5F9', color: '#64748B' },
+            glasses: { label: '我需要配鏡 / 換眼鏡',         bg: '#EBF3FF', color: '#2563EB' },
+            track:   { label: '我只需要眼部檢查 / 度數追蹤', bg: '#FEF3C7', color: '#D97706' },
+            other:   { label: '其他服務',                   bg: '#F1F5F9', color: '#64748B' },
         };
         const CATEGORY_ORDER = ['glasses', 'track', 'other'];
 
@@ -359,11 +359,10 @@
                     const items = groups[cat];
                     return `
                     <div style="margin-bottom:24px;">
-                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
                             <span style="width:8px;height:8px;border-radius:99px;background:${catStyle.color};display:inline-block;flex-shrink:0;"></span>
                             <span style="font-size:14px;font-weight:700;color:${catStyle.color};">${catStyle.label}</span>
                         </div>
-                        <div style="font-size:12px;color:#94a3b8;margin-bottom:10px;margin-left:15px;min-height:15px;">${catStyle.sub}</div>
                         <div style="display:flex;flex-direction:column;gap:10px;">
                             ${items.map(s => `
                             <button onclick="selectService('${s.name}', ${s.duration})"
@@ -375,7 +374,7 @@
                                 </div>
                                 <div style="flex:1;min-width:0;">
                                     <div style="font-size:16px;font-weight:600;color:#1e293b;">${s.name}</div>
-                                    <div style="font-size:12.5px;color:#64748b;margin-top:3px;line-height:1.4;">${s.style.desc || catStyle.sub}</div>
+                                    ${s.style.desc ? `<div style="font-size:12.5px;color:#64748b;margin-top:3px;line-height:1.4;">${s.style.desc}</div>` : ''}
                                 </div>
                                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
                                     <span style="font-size:11px;font-weight:600;color:${catStyle.color};background:${catStyle.bg};padding:3px 9px;border-radius:99px;white-space:nowrap;">${s.duration} 分鐘</span>
