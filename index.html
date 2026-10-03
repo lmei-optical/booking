@@ -317,16 +317,16 @@
         const SERVICE_MAP = [
             { keywords: ['追蹤'],               icon: 'ti-zoom-check', desc: '定期追蹤度數變化', category: 'track' },
             { keywords: ['眼健康','篩查','健康'], icon: 'ti-heart-plus',  desc: '角膜、水晶體、眼底等視力檢測',     category: 'track' },
-            { keywords: ['成人'],               icon: 'ti-eye',         desc: '成人驗光、挑選鏡框、配新眼鏡', category: 'glasses' },
-            { keywords: ['兒童','小孩'],         icon: 'ti-mood-kid',    desc: '兒童視力檢查、挑選鏡框與配鏡', category: 'glasses' },
+            { keywords: ['成人'],               icon: 'ti-eye',         desc: '包含完整驗光與鏡框鏡片挑選', category: 'glasses' },
+            { keywords: ['兒童','小孩'],         icon: 'ti-mood-kid',    desc: '初次配鏡、度數改變需重新配鏡', category: 'glasses' },
             { keywords: ['換片','磨製','鏡片'],  icon: 'ti-tool',        desc: '保留原有鏡框，更換新鏡片',     category: 'other' },
         ];
         const DEFAULT_STYLE = { icon: 'ti-eye-check', desc: '', category: 'other' };
 
         // 三大主題區塊的顏色與白話標題（家長一眼就知道自己屬於哪一種）
         const CATEGORY_STYLE = {
-            glasses: { label: '我需要配鏡 / 換眼鏡',         bg: '#EBF3FF', color: '#2563EB' },
-            track:   { label: '我只需要眼部檢查 / 度數追蹤', bg: '#FEF3C7', color: '#D97706' },
+            glasses: { label: '我需要配鏡 / 換眼鏡',         bg: '#EBF3FF', color: '#4a8cc0' },
+            track:   { label: '我只要眼部檢查 / 度數追蹤', bg: '#FEF3C7', color: '#D97706' },
             other:   { label: '其他服務',                   bg: '#F1F5F9', color: '#64748B' },
         };
         const CATEGORY_ORDER = ['glasses', 'track', 'other'];
