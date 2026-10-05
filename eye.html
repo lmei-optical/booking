@@ -56,7 +56,7 @@
                     <i class="fa-solid fa-circle-notch fa-spin mr-1"></i>系統載入中，請稍候...
                 </div>
                 <button onclick="startQuery()" class="w-full bg-white text-blue-800 border-2 border-blue-100 font-bold py-4 rounded-2xl shadow-sm hover:bg-blue-50 transition-all flex items-center justify-center text-lg">
-                    <i class="fa-solid fa-magnifying-glass mr-3"></i> 查詢 / 取消預約
+                    <i class="fa-solid fa-magnifying-glass mr-3"></i> 查詢 / 更改預約
                 </button>
             </div>
         </div>
@@ -165,6 +165,44 @@
             <button onclick="prevStep()" class="flex items-center text-slate-500 font-medium hover:text-slate-800 transition-colors">
                 <i class="fa-solid fa-chevron-left mr-2"></i> 返回
             </button>
+        </div>
+    </div>
+
+    <!-- ============================== -->
+    <!-- 【新增】更改預約：選擇「修改時段」或「取消預約」 -->
+    <!-- ============================== -->
+    <div id="change-choice-modal" class="fixed inset-0 bg-black/50 z-[105] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs p-6 text-center">
+            <h3 class="font-bold text-slate-800 mb-1">預約異動</h3>
+            <p class="text-xs text-slate-400 mb-5" id="change-choice-summary"></p>
+            <div class="space-y-3">
+                <button onclick="chooseReschedule()" class="w-full bg-blue-800 text-white font-bold py-3 rounded-xl hover:bg-blue-900 transition-all">
+                    <i class="fa-solid fa-calendar-days mr-2"></i>修改時段
+                </button>
+                <button onclick="chooseCancel()" class="w-full bg-white text-red-500 border-2 border-red-100 font-bold py-3 rounded-xl hover:bg-red-50 transition-all">
+                    <i class="fa-solid fa-ban mr-2"></i>取消預約
+                </button>
+                <button onclick="closeChangeChoice()" class="w-full text-slate-400 text-sm py-2">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 【新增】修改時段 視窗 -->
+    <div id="reschedule-modal" class="fixed inset-0 bg-black/50 z-[110] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-slate-800">修改預約時段</h3>
+                <button onclick="closeRescheduleModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p class="text-xs text-slate-400 mb-4">項目：<span id="reschedule-service-name" class="font-bold text-slate-600"></span></p>
+            <div class="mb-4">
+                <label class="block text-sm font-bold text-slate-700 mb-2">選擇新日期</label>
+                <input type="date" id="reschedule-date" onchange="fetchRescheduleSlots()" class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-800">
+            </div>
+            <h4 class="text-sm font-bold text-slate-600 mb-2">可預約時段</h4>
+            <div id="reschedule-slots">
+                <p class="text-center text-slate-400 text-sm py-4">請先選擇上方日期</p>
+            </div>
         </div>
     </div>
 
@@ -285,15 +323,24 @@
             window.scrollTo(0, 0);
         }
 
-        // 服務對照表
+        // 服務對照表（關鍵字順序很重要：越精確的要放越前面，例如「追蹤」要在「兒童」之前，
+        // 否則「兒童視力追蹤」會先被「兒童」比對中，誤歸類到配鏡類）
         const SERVICE_MAP = [
-            { keywords: ['追蹤'],               icon: 'ti-zoom-check',    bg: '#FAEEDA', color: '#854F0B', desc: '定期追蹤度數變化',     category: '視力追蹤' },
-            { keywords: ['眼健康','篩查','健康'], icon: 'ti-heart-plus',    bg: '#FBEAF0', color: '#993556', desc: '全面性眼部健康檢查',   category: '視力追蹤' },
-            { keywords: ['成人'],               icon: 'ti-eye',           bg: '#E6F1FB', color: '#185FA5', desc: '',                   category: '驗光配鏡' },
-            { keywords: ['兒童','小孩'],         icon: 'ti-mood-kid',      bg: '#EAF3DE', color: '#3B6D11', desc: '',                   category: '驗光配鏡' },
-            { keywords: ['換片','磨製','鏡片'],  icon: 'ti-tool',          bg: '#EEEDFE', color: '#534AB7', desc: '保留原有鏡框換新鏡片', category: '其他服務' },
+            { keywords: ['追蹤'],               icon: 'ti-zoom-check', desc: '定期追蹤度數變化', category: 'track' },
+            { keywords: ['眼健康','篩查','健康'], icon: 'ti-heart-plus',  desc: '角膜、水晶體、眼底等視力檢測',     category: 'track' },
+            { keywords: ['成人'],               icon: 'ti-eye',         desc: '包含完整驗光與鏡框鏡片挑選', category: 'glasses' },
+            { keywords: ['兒童','小孩'],         icon: 'ti-mood-kid',    desc: '初次配鏡、度數改變需重新配鏡', category: 'glasses' },
+            { keywords: ['換片','磨製','鏡片'],  icon: 'ti-tool',        desc: '保留原有鏡框，更換新鏡片',     category: 'other' },
         ];
-        const DEFAULT_STYLE = { icon: 'ti-eye-check', bg: '#F1EFE8', color: '#5F5E5A', desc: '', category: '其他服務' };
+        const DEFAULT_STYLE = { icon: 'ti-eye-check', desc: '', category: 'other' };
+
+        // 三大主題區塊的顏色與白話標題（家長一眼就知道自己屬於哪一種）
+        const CATEGORY_STYLE = {
+            glasses: { label: '我需要配鏡 / 換眼鏡',         bg: '#EBF3FF', color: '#2470ad' },
+            track:   { label: '我只要眼部檢查 / 度數追蹤', bg: '#FEF3C7', color: '#D97706' },
+            other:   { label: '其他服務',                   bg: '#F1F5F9', color: '#64748B' },
+        };
+        const CATEGORY_ORDER = ['glasses', 'track', 'other'];
 
         function getServiceStyle(name) {
             for (const s of SERVICE_MAP) {
@@ -314,31 +361,41 @@
                 if (!groups[style.category]) groups[style.category] = [];
                 groups[style.category].push({ ...s, style });
             });
-            list.innerHTML = Object.entries(groups).map(([cat, items]) => `
-                <div style="margin-bottom:20px;">
-                    <div style="font-size:11px;font-weight:500;letter-spacing:0.06em;color:#94a3b8;text-transform:uppercase;margin-bottom:10px;padding-left:2px;">${cat}</div>
-                    <div style="display:flex;flex-direction:column;gap:10px;">
-                        ${items.map(s => `
-                        <button onclick="selectService('${s.name}', ${s.duration})"
-                            style="width:100%;text-align:left;background:white;border:1px solid #e2e8f0;border-radius:16px;padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;"
-                            onmouseover="this.style.borderColor='#3b82f6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
-                            onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
-                            <div style="width:44px;height:44px;border-radius:10px;background:${s.style.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i class="ti ${s.style.icon}" style="font-size:22px;color:${s.style.color};" aria-hidden="true"></i>
-                            </div>
-                            <div style="flex:1;min-width:0;">
-                                <div style="font-size:15px;font-weight:500;color:#1e293b;">${s.name}</div>
-                                ${s.style.desc ? `<div style="font-size:12px;color:#94a3b8;margin-top:2px;">${s.style.desc}</div>` : ''}
-                            </div>
-                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
-                                <span style="font-size:11px;font-weight:500;color:${s.style.color};background:${s.style.bg};padding:3px 9px;border-radius:99px;">${s.duration} 分鐘</span>
-                                <i class="ti ti-chevron-right" style="font-size:15px;color:#cbd5e1;" aria-hidden="true"></i>
-                            </div>
-                        </button>
-                        `).join('')}
+
+            list.innerHTML = CATEGORY_ORDER
+                .filter(cat => groups[cat] && groups[cat].length > 0)
+                .map(cat => {
+                    const catStyle = CATEGORY_STYLE[cat];
+                    const items = groups[cat];
+                    return `
+                    <div style="margin-bottom:24px;">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+                            <span style="width:8px;height:8px;border-radius:99px;background:${catStyle.color};display:inline-block;flex-shrink:0;"></span>
+                            <span style="font-size:14px;font-weight:700;color:${catStyle.color};">${catStyle.label}</span>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            ${items.map(s => `
+                            <button onclick="selectService('${s.name}', ${s.duration})"
+                                style="width:100%;text-align:left;background:white;border:1.5px solid #e2e8f0;border-left:4px solid ${catStyle.color};border-radius:16px;padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;"
+                                onmouseover="this.style.boxShadow='0 0 0 3px ${catStyle.bg}'"
+                                onmouseout="this.style.boxShadow='none'">
+                                <div style="width:46px;height:46px;border-radius:12px;background:${catStyle.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="ti ${s.style.icon}" style="font-size:23px;color:${catStyle.color};" aria-hidden="true"></i>
+                                </div>
+                                <div style="flex:1;min-width:0;">
+                                    <div style="font-size:16px;font-weight:600;color:#1e293b;">${s.name}</div>
+                                    ${s.style.desc ? `<div style="font-size:12.5px;color:#64748b;margin-top:3px;line-height:1.4;">${s.style.desc}</div>` : ''}
+                                </div>
+                                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
+                                    <span style="font-size:11px;font-weight:600;color:${catStyle.color};background:${catStyle.bg};padding:3px 9px;border-radius:99px;white-space:nowrap;">${s.duration} 分鐘</span>
+                                    <i class="ti ti-chevron-right" style="font-size:15px;color:#cbd5e1;" aria-hidden="true"></i>
+                                </div>
+                            </button>
+                            `).join('')}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                    `;
+                }).join('');
         }
 
         function selectService(name, dur) { bookingData.service = name; bookingData.duration = dur; nextStep(); }
@@ -489,7 +546,7 @@
                 <div class="bg-white border p-4 rounded-xl shadow-sm mb-3">
                     <div class="flex justify-between mb-2">
                         <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 rounded">${b.service}</span>
-                        <button onclick="cancelBooking('${b.id}')" class="text-xs text-red-500 font-bold">取消</button>
+                        <button onclick="openChangeChoice('${b.id}', '${b.service}')" class="text-xs text-blue-600 font-bold">更改</button>
                     </div>
                     <div class="font-bold text-lg">${b.date}</div>
                     <div class="text-slate-500 text-sm">${b.time}</div>
@@ -505,6 +562,109 @@
                     if (res.success) { alert('已取消'); executeQuery(); } else alert('取消失敗');
                 } catch(e) { alert("發生錯誤"); } finally { showLoading(false); }
             }
+        }
+
+        // ==========================================
+        // 【新增】更改預約：選擇「修改時段」或「取消預約」
+        // ==========================================
+        let changeChoiceTarget = null;
+
+        function openChangeChoice(id, service) {
+            changeChoiceTarget = { id, service };
+            document.getElementById('change-choice-summary').innerText = service;
+            const modal = document.getElementById('change-choice-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeChangeChoice() {
+            const modal = document.getElementById('change-choice-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function chooseReschedule() {
+            closeChangeChoice();
+            openRescheduleModal(changeChoiceTarget.id, changeChoiceTarget.service);
+        }
+
+        function chooseCancel() {
+            const targetId = changeChoiceTarget.id;
+            closeChangeChoice();
+            cancelBooking(targetId);
+        }
+
+        // ==========================================
+        // 【新增】修改時段
+        // ==========================================
+        let rescheduleTarget = null;
+
+        function openRescheduleModal(id, service) {
+            rescheduleTarget = { id, service };
+            document.getElementById('reschedule-service-name').innerText = service;
+            document.getElementById('reschedule-date').value = '';
+            document.getElementById('reschedule-slots').innerHTML = '<p class="text-center text-slate-400 text-sm py-4">請先選擇上方日期</p>';
+            const modal = document.getElementById('reschedule-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeRescheduleModal() {
+            const modal = document.getElementById('reschedule-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function fetchRescheduleSlots() {
+            const dateStr = document.getElementById('reschedule-date').value;
+            if (!dateStr) return;
+            const container = document.getElementById('reschedule-slots');
+
+            // 先檢查是否為公休日，不用打後台就能提早回饋
+            if (systemSettings && systemSettings.specialDates) {
+                const special = systemSettings.specialDates.find(d => d.date === dateStr);
+                if (special && !special.isOpen) {
+                    container.innerHTML = '<p class="text-center text-red-500 text-sm py-4">該日為公休日，請選擇其他日期</p>';
+                    return;
+                }
+            }
+
+            container.innerHTML = '<p class="text-center text-slate-400 text-sm py-4"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i>查詢中...</p>';
+            try {
+                const slots = await callAPI('getSlots', { dateStr: dateStr, serviceName: rescheduleTarget.service });
+                if (!slots || slots.length === 0) {
+                    container.innerHTML = '<p class="text-center text-red-500 text-sm py-4">該日已無可預約時段</p>';
+                    return;
+                }
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-3 gap-2';
+                slots.forEach(time => {
+                    const btn = document.createElement('button');
+                    btn.innerText = time;
+                    btn.className = 'py-2.5 text-sm font-bold border border-slate-200 bg-white text-slate-700 rounded-lg hover:bg-blue-800 hover:text-white transition-all';
+                    btn.onclick = () => confirmReschedule(dateStr, time);
+                    grid.appendChild(btn);
+                });
+                container.innerHTML = '';
+                container.appendChild(grid);
+            } catch(e) {
+                container.innerHTML = '<p class="text-center text-red-500 text-sm py-4">查詢失敗，請重試</p>';
+            }
+        }
+
+        async function confirmReschedule(newDate, newTime) {
+            if (!confirm(`確定要把預約改到 ${newDate} ${newTime} 嗎？`)) return;
+            showLoading(true, "更改時段中...");
+            try {
+                const res = await callAPI('rescheduleBooking', { bookingId: rescheduleTarget.id, newDate: newDate, newTime: newTime });
+                if (res.success) {
+                    alert('時段已成功更改！');
+                    closeRescheduleModal();
+                    executeQuery();
+                } else {
+                    alert('更改失敗：' + (res.msg || ''));
+                }
+            } catch(e) { alert('發生錯誤'); } finally { showLoading(false); }
         }
     </script>
 </body>
